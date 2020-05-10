@@ -1,4 +1,4 @@
-# Derivco Sports Drone Simulator
+# Derivco Sports Drone Simulation
 
 ## Overview
 
