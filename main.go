@@ -166,9 +166,6 @@ func startDispatcher() {
 			}
 		}
 	}()
-
-	close(commands)
-	close(results)
 }
 
 func main() {
