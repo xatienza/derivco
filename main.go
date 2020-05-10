@@ -49,8 +49,8 @@ func droneControl(id int, commandReceived <-chan entities.DroneCommand, result c
 		<-timer1.C
 	}
 
-	station := entities.FindStationByGPS(currentStations, command.Route.Lat, command.Route.Lon)
-
+	// station := entities.FindStationByGPS(currentStations, command.Route.Lat, command.Route.Lon)
+	station := entities.GetNearStation(currentStations, command.Route.Lat, command.Route.Lon)
 	var commandResult = entities.DroneCommandResult{
 		DroneId: id,
 	}
@@ -61,7 +61,7 @@ func droneControl(id int, commandReceived <-chan entities.DroneCommand, result c
 	} else {
 		commandResult.HasReport = true
 		commandResult.Station = station.Name
-		commandResult.CurrentWeather = entities.GetRandomWeatherCondition()
+		commandResult.CurrentTraffic = entities.GetRandomTrafficCondition()
 	}
 
 	result <- commandResult
@@ -118,7 +118,7 @@ func startDispatcher() {
 					case commandResult := <-results:
 
 					if (commandResult.HasReport) {
-						fmt.Printf("[Dispatcher][Drone %d reports] weather at %s is %s", commandResult.DroneId, commandResult.Station, commandResult.CurrentWeather)
+						fmt.Printf("[Drone %d][Time %s] Traffic at %s is %s\n", commandResult.DroneId, startTime.Format(TIME_LAYOUT), commandResult.Station, commandResult.CurrentTraffic)
 					}
 
 					if (commandResult.DroneId == DRON_A_ID) {
@@ -156,7 +156,7 @@ func startDispatcher() {
 				}
 
 				startTime = startTime.Add(time.Second * 1)
-				fmt.Println("[Dispatcher][info] Clock ", startTime.Format("03:04:05"))
+				// fmt.Println("[Dispatcher][info] Clock ", startTime.Format(TIME_LAYOUT))
 			}
 
 			if (startTime.After(stopTime)) {
@@ -166,6 +166,9 @@ func startDispatcher() {
 			}
 		}
 	}()
+
+	close(commands)
+	close(results)
 }
 
 func main() {
