@@ -12,4 +12,5 @@ Thank you so much for your attention.
 
 ### How to run
 
+```golang 
 go run main.go
